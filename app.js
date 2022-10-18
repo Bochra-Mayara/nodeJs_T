@@ -1,24 +1,52 @@
-var http = require('http')
+const http = require('http')
+const { readFileSync } = require('fs')
 
-var fs = require('fs')
+// get all files
+const homePage = readFileSync('./Nav-bar/index.html')
+const homeStyles = readFileSync('./Nav-bar/styles.css')
+const homeImage = readFileSync('./Nav-bar/logo.svg')
+const homeLogic = readFileSync('./Nav-bar/browser-app.js')
 
-
-http.createServer(function (req, res)  {
-    // const text = fs.readFileSync('./content/big.txt', 'utf8')
-    // res.end(text)
-
-    const fileStream = fs.createReadStream('./content/big.txt', 'utf-8')
-    fileStream.on('open', () => {
-        fileStream.pipe(res)
-    })
-
-
-    fileStream.on('error', (err) => {
-        res.end(err)
-    })
-
+const server = http.createServer((req, res) => {
+  // console.log(req.method)
+  const url = req.url
+  console.log(url)
+  // home page
+  if (url === '/') {
+    res.writeHead(200, { 'content-type': 'text/html' })
+    res.write(homePage)
+    res.end()
+  }
+  // about page
+  else if (url === '/about') {
+    res.writeHead(200, { 'content-type': 'text/html' })
+    res.write('<h1>about page</h1>')
+    res.end()
+  }
+  // styles
+  else if (url === '/styles.css') {
+    res.writeHead(200, { 'content-type': 'text/css' })
+    res.write(homeStyles)
+    res.end()
+  }
+  // image/logo
+  else if (url === '/logo.svg') {
+    res.writeHead(200, { 'content-type': 'image/svg+xml' })
+    res.write(homeImage)
+    res.end()
+  }
+  // logic
+  else if (url === '/browser-app.js') {
+    res.writeHead(200, { 'content-type': 'text/javascript' })
+    res.write(homeLogic)
+    res.end()
+  }
+  // 404
+  else {
+    res.writeHead(404, { 'content-type': 'text/html' })
+    res.write('<h1>page not found</h1>')
+    res.end()
+  }
 })
 
-
-.listen(5000)
-
+server.listen(5000)
